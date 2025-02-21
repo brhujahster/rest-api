@@ -12,9 +12,9 @@ import (
 // It creates a new PedidoRepository, PedidoUseCase, and PedidoController, and
 // registers the routes for the Pedido resource under the "/pedidos" path.
 func InitializeRoutes(router *gin.RouterGroup) {
-	pedidoRepository := repository.NewPedidoRepository()
-	pedidoUseCase := service.NewPedidoUseCase(pedidoRepository)
-	pedidoController := controller.NewPedidoController(pedidoUseCase)
+	exempleRepository := repository.NewPedidoRepository()
+	examapleService := service.NewExempleService(exempleRepository)
+	pedidoController := controller.NewExampleController(examapleService)
 
 	pedidoController.InitRoutes(router)
 

@@ -9,38 +9,37 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type pedidoController struct {
-	pedidoUseCase *service.PedidoUseCase
+type ExempleController struct {
+	ExempleUseCase *service.ExempleService
 }
 
-func NewPedidoController(usecase *service.PedidoUseCase) *pedidoController {
-	return &pedidoController{
-		pedidoUseCase: usecase,
+func NewExampleController(usecase *service.ExempleService) *ExempleController {
+	return &ExempleController{
+		ExempleUseCase: usecase,
 	}
 }
 
-func (p *pedidoController) InitRoutes(r *gin.RouterGroup) {
-	controller := r.Group("/pedidos")
-	controller.GET("/", p.getPedidos)
+func (p *ExempleController) InitRoutes(r *gin.RouterGroup) {
+	controller := r.Group("/exemples")
+	controller.GET("/", p.getExemplos)
 	controller.GET("/:id", p.getById)
 	controller.POST("/", p.create)
 	controller.PUT("/:id", p.update)
 	controller.DELETE("/:id", p.delete)
 }
 
-func (p *pedidoController) getPedidos(ctx *gin.Context) {
-	pedidos, err := p.pedidoUseCase.GetPedidos()
+func (p *ExempleController) getExemplos(ctx *gin.Context) {
+	Exemples, err := p.ExempleUseCase.GetExemples()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 	}
 
-	ctx.JSON(http.StatusOK, pedidos)
+	ctx.JSON(http.StatusOK, Exemples)
 }
 
-func (p *pedidoController) getById(ctx *gin.Context) {
-	var pedido entity.Pedido
+func (p *ExempleController) getById(ctx *gin.Context) {
 	id := ctx.Param("id")
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
@@ -49,25 +48,27 @@ func (p *pedidoController) getById(ctx *gin.Context) {
 		}
 		ctx.JSON(http.StatusInternalServerError, response)
 	}
-	pedido, err = p.pedidoUseCase.GetPedido(idInt)
+	example1, err := p.ExempleUseCase.GetExemple(idInt)
+
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		response := entity.ResponseMessage{
+			Message: "Id inválido",
+		}
+		ctx.JSON(http.StatusInternalServerError, response)
 	}
 
-	ctx.JSON(http.StatusOK, pedido)
+	ctx.JSON(http.StatusOK, example1)
 }
 
-func (p *pedidoController) create(ctx *gin.Context) {
-	var pedido entity.Pedido
-	err := ctx.BindJSON(&pedido)
+func (p *ExempleController) create(ctx *gin.Context) {
+	var Exemplo entity.Exemple
+	err := ctx.BindJSON(&Exemplo)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 	}
-	pedidoSalvo, err := p.pedidoUseCase.Create(pedido)
+	ExemploSalvo, err := p.ExempleUseCase.Create(Exemplo)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -75,11 +76,11 @@ func (p *pedidoController) create(ctx *gin.Context) {
 		})
 	}
 
-	ctx.JSON(http.StatusOK, pedidoSalvo)
+	ctx.JSON(http.StatusOK, ExemploSalvo)
 }
 
-func (p *pedidoController) update(ctx *gin.Context) {
-	var pedido entity.Pedido
+func (p *ExempleController) update(ctx *gin.Context) {
+	var Exemplo entity.Exemple
 	id := ctx.Param("id")
 	if id == "" {
 		response := entity.ResponseMessage{
@@ -88,7 +89,7 @@ func (p *pedidoController) update(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
-	pedidoId, err := strconv.Atoi(id)
+	ExemploId, err := strconv.Atoi(id)
 	if err != nil {
 		response := entity.ResponseMessage{
 			Message: "Id inválido",
@@ -96,7 +97,7 @@ func (p *pedidoController) update(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
-	err = ctx.BindJSON(&pedido)
+	err = ctx.BindJSON(&Exemplo)
 	if err != nil {
 		response := entity.ResponseMessage{
 			Message: "Id não informado",
@@ -104,17 +105,17 @@ func (p *pedidoController) update(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, response)
 	}
 
-	pedidoAtualizado, err := p.pedidoUseCase.Update(pedidoId, pedido)
+	exemploAtualizado, err := p.ExempleUseCase.Update(ExemploId, Exemplo)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 	}
 
-	ctx.JSON(http.StatusOK, pedidoAtualizado)
+	ctx.JSON(http.StatusOK, exemploAtualizado)
 }
 
-func (p *pedidoController) delete(ctx *gin.Context) {
+func (p *ExempleController) delete(ctx *gin.Context) {
 	id := ctx.Param("id")
 	if id == "" {
 		response := entity.ResponseMessage{
@@ -123,7 +124,7 @@ func (p *pedidoController) delete(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
-	pedidoId, err := strconv.Atoi(id)
+	exampleId, err := strconv.Atoi(id)
 	if err != nil {
 		response := entity.ResponseMessage{
 			Message: "Id inválido",
@@ -132,7 +133,7 @@ func (p *pedidoController) delete(ctx *gin.Context) {
 		return
 	}
 
-	err = p.pedidoUseCase.Delete(pedidoId)
+	err = p.ExempleUseCase.Delete(exampleId)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{

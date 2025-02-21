@@ -20,7 +20,7 @@ func NewExampleController(usecase *service.ExempleService) *ExempleController {
 }
 
 func (p *ExempleController) InitRoutes(r *gin.RouterGroup) {
-	controller := r.Group("/exemples")
+	controller := r.Group("/examples")
 	controller.GET("/", p.getExemplos)
 	controller.GET("/:id", p.getById)
 	controller.POST("/", p.create)
